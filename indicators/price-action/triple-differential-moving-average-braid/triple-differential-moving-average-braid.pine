@@ -1,0 +1,48 @@
+// Designed by Adrian Dyer for The Leading Indicator
+//@version=6
+
+indicator("Triple Differential Moving Average Braid", overlay=true)
+
+// Inputs
+string groupLengths = "Moving Average Lengths"
+string groupColors = "Ribbon Colors"
+
+goldenSectionFastLength = input.int(50, title="Golden Section Fast Length", minval=1, group=groupLengths)
+goldenSectionSlowLength = input.int(200, title="Golden Section Slow Length", minval=1, group=groupLengths)
+royalGuardFastLength = input.int(50, title="Royal Guard Fast Length", minval=1, group=groupLengths)
+royalGuardSlowLength = input.int(200, title="Royal Guard Slow Length", minval=1, group=groupLengths)
+silverThreadLength = input.int(21, title="Silver Thread Length", minval=1, group=groupLengths)
+
+goldenSectionColorAbove = input.color(color.new(color.yellow, 50), title="Golden Section Above Color", group=groupColors)
+goldenSectionColorBelow = input.color(color.new(#dea44c, 50), title="Golden Section Below Color", group=groupColors)
+
+royalGuardColorAbove = input.color(color.new(#8f1fa3, 40), title="Royal Guard Above Color", group=groupColors)
+royalGuardColorBelow = input.color(color.new(#ca17c7, 40), title="Royal Guard Below Color", group=groupColors)
+
+silverThreadColorAbove = input.color(color.new(#5a88d7, 0), title="Silver Thread Above Color", group=groupColors)
+silverThreadColorBelow = input.color(color.new(#5bc2d7, 0), title="Silver Thread Below Color", group=groupColors)
+
+// Moving averages
+goldenSectionFastMA = ta.sma(close, goldenSectionFastLength)
+goldenSectionSlowMA = ta.sma(close, goldenSectionSlowLength)
+
+royalGuardFastMA = ta.ema(close, royalGuardFastLength)
+royalGuardSlowMA = ta.ema(close, royalGuardSlowLength)
+
+silverThreadSMA = ta.sma(close, silverThreadLength)
+silverThreadEMA = ta.ema(close, silverThreadLength)
+
+// Plots
+plotGoldenSectionFast = plot(goldenSectionFastMA, title="Golden Section Fast", color=color.yellow, linewidth=1)
+plotGoldenSectionSlow = plot(goldenSectionSlowMA, title="Golden Section Slow", color=color.yellow, linewidth=1)
+
+plotRoyalGuardFast = plot(royalGuardFastMA, title="Royal Guard Fast", color=color.purple, linewidth=1)
+plotRoyalGuardSlow = plot(royalGuardSlowMA, title="Royal Guard Slow", color=color.rgb(234, 167, 207), linewidth=1)
+
+plotSilverThreadFast = plot(silverThreadSMA, title="Silver Thread Fast", color=color.silver, linewidth=1)
+plotSilverThreadSlow = plot(silverThreadEMA, title="Silver Thread Slow", color=color.gray, linewidth=1)
+
+// Ribbon fills
+fill(plotGoldenSectionFast, plotGoldenSectionSlow, color=goldenSectionFastMA > goldenSectionSlowMA ? goldenSectionColorAbove : goldenSectionColorBelow, title="Golden Section Fill")
+fill(plotRoyalGuardFast, plotRoyalGuardSlow, color=royalGuardFastMA > royalGuardSlowMA ? royalGuardColorAbove : royalGuardColorBelow, title="Royal Guard Fill")
+fill(plotSilverThreadFast, plotSilverThreadSlow, color=silverThreadSMA > silverThreadEMA ? silverThreadColorAbove : silverThreadColorBelow, title="Silver Thread Fill")
